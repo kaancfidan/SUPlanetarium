@@ -69,7 +69,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\GL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy  "$(OutDir)" "$(SolutionDir)GL\glut32.dll" </Command>
+      <Command>xcopy  "$(SolutionDir)GL\glut32.dll" "$(OutDir)" /Y </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -93,7 +93,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\GL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy  "$(SolutionDir)GL\glut32.dll" "$(OutDir)" </Command>
+      <Command>xcopy  "$(SolutionDir)GL\glut32.dll" "$(OutDir)" /Y </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
