@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\CreatePlanets.cs" />
      <Compile Include="Assets\Planet.cs" />
+     <Compile Include="Assets\Planetarium.cs" />
      <Compile Include="Assets\UpdateCamera.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
