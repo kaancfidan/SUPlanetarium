@@ -1,7 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
-Project("{59D0FBD1-7F0E-C7D9-6AC1-E7A6C1B58E2F}") = "SUPlanetarium", "Assembly-CSharp.csproj", "{CD9322C0-CD66-D8F5-33C6-1843B0714A93}"
+Project("{59D0FBD1-7F0E-C7D9-6AC1-E7A6C1B58E2F}") = "SUPlanetarium", "Assembly-CSharp-vs.csproj", "{CD9322C0-CD66-D8F5-33C6-1843B0714A93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,7 +17,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+		GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -36,4 +36,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
+
 EndGlobal
