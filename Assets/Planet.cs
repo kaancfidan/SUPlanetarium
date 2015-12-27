@@ -1,134 +1,68 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
-public class trailNode		// Linked list structure for trail nodes (old positions)
-{
-    public double x;
-    public double y;
-    public double z;
-
-    public trailNode next;
-};
-
 public class Planet : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
         m_Pi = 3.14159265358979323846;
-        m_RaDeg = 180.0 / m_Pi;
-        m_DegRad = m_Pi / 180.0;
+        m_Rad2Deg = 180.0 / m_Pi;
+        m_Deg2Rad = m_Pi / 180.0;
 
-        N = N_inc = i = i_inc = w = w_inc = a = a_inc = e = e_inc = M = M_inc = 0;
+        UpdatePosition(m_Date, m_Hour);
+        transform.position = new Vector3((float)y, (float)z, (float)x);
+    }
 
-        radius = 0.00464912633;
-        mass = 1.9891e30;
+    void FixedUpdate()
+    {
+        m_Hour += m_TimeScale;
 
-        angvel = 14713;
-        axis_angle = 0;
+        if (m_Hour >= 24)
+        {
+            m_Date = m_Date.AddDays(m_Hour/24);
+            m_Hour = m_Hour%24;
+        }
 
-        startPtr = new trailNode();
-        startPtr.next = null;
-        trailCount = 0;
+        UpdatePosition(m_Date, m_Hour);
+
+        transform.position = new Vector3((float)y, (float)z, (float)x);
+    }
+
+    public void ChangeTimeScale(float timeScale)
+    {
+        m_TimeScale = timeScale;
     }
 
     double SinD(double x)
     {
-        return System.Math.Sin(x * m_DegRad);
+        return System.Math.Sin(x * m_Deg2Rad);
     }
     double CosD(double x)
     {
-        return System.Math.Cos(x * m_DegRad);
+        return System.Math.Cos(x * m_Deg2Rad);
     }
     double TanD(double x)
     {
-        return System.Math.Tan(x * m_DegRad);
+        return System.Math.Tan(x * m_Deg2Rad);
     }
     double ASinD(double x)
     {
-        return System.Math.Asin(x * m_RaDeg);
+        return System.Math.Asin(x) * m_Rad2Deg;
     }
     double ACosD(double x)
     {
-        return System.Math.Acos(x * m_RaDeg);
+        return System.Math.Acos(x) * m_Rad2Deg;
     }
     double ATanD(double x)
     {
-        return System.Math.Atan(x * m_RaDeg);
+        return System.Math.Atan(x) * m_Rad2Deg;
     }
     double ATan2D(double y, double x)
     {
-        return System.Math.Atan2(y, x);
+        return System.Math.Atan2(y, x) * m_Rad2Deg;
     }
 
-    public double[] GetPosVec()
-    {
-        double[] posVec = new double[3];
-
-        posVec[0] = x;
-        posVec[1] = y;
-        posVec[2] = z;
-
-        return posVec;
-    }
-
-    public double GetX()
-    {
-        return x;
-    }
-
-    public double GetY()
-    {
-        return y;
-    }
-
-    public double GetZ()
-    {
-        return z;
-    }
-
-    public double GetMass()
-    {
-        return mass;
-    }
-
-    public double GetRadius()
-    {
-        return radius;
-    }
-
-    public void InitKepler(double p_N, double p_N_inc, 
-                           double p_i, double p_i_inc, 
-                           double p_w, double p_w_inc, 
-                           double p_a, double p_a_inc,
-                           double p_e, double p_e_inc, 
-                           double p_M, double p_M_inc)
-    {
-        N = p_N;
-        i = p_i;
-        w = p_w;
-        a = p_a;
-        e = p_e;
-        M = p_M;
-
-        N_inc = p_N_inc;
-        i_inc = p_i_inc;
-        w_inc = p_w_inc;
-        a_inc = p_a_inc;
-        e_inc = p_e_inc;
-        M_inc = p_M_inc;
-    }
-
-    public void InitPhysical(double p_mass, double p_radius,
-                             double p_angvel, double p_axis_angle)
-    {
-        mass = p_mass;
-        radius = p_radius;
-        angvel = p_angvel;
-        axis_angle = p_axis_angle;
-    }
-
-    public void UpdatePosition(System.DateTime date, int hour)
+    public void UpdatePosition(System.DateTime date, float hour)
     {
         double E, E_old; // for eccentric anomaly computation iterations
 
@@ -159,62 +93,13 @@ public class Planet : MonoBehaviour
         r = System.Math.Sqrt(x_op * x_op + y_op * y_op);
         v = ATan2D(y_op, x_op);
 
-        if (!(x == 0 && y == 0 && z == 0))
-        {
-            UpdateTrail();
-        }
-
         // Heliocentric coordinates
         x = r * (CosD(N_act) * CosD(v + w_act) - SinD(N_act) * SinD(v + w_act) * CosD(i_act));
         y = r * (SinD(N_act) * CosD(v + w_act) + CosD(N_act) * SinD(v + w_act) * CosD(i_act));
         z = r * SinD(v + w_act) * SinD(i_act);
     }
 
-    void DrawTrail(int width, float[] color)
-    {
-        trailNode temp1, temp2;
-
-        float[] tempcolor = new float[3];
-        float alpha = 1.0f;
-        temp1 = startPtr;
-
-        if (temp1.next != null)
-        { 
-            temp2 = (trailNode)temp1.next;
-        }
-        else
-        {
-            temp2 = temp1;
-        }
-
-        //glEnable(GL_BLEND);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        //glDisable(GL_LIGHTING);
-
-        //glLineWidth(width);
-
-        //glBegin(GL_LINES);
-
-        //while (temp2->next != NULL)
-        //{
-        //    glColor4f(color[0], color[1], color[2], alpha);
-
-        //    alpha *= 1 - (1 / (a_act * 20 * 12));
-
-        //    temp1 = temp1->next;
-        //    temp2 = temp2->next;
-
-        //    glVertex3f(temp1->y, temp1->z, temp1->x);
-        //    glVertex3f(temp2->y, temp2->z, temp2->x);
-        //}
-
-        //glEnd();
-
-        //glDisable(GL_BLEND);
-        //glEnable(GL_LIGHTING);
-    } 
-
-    public void UpdateKeplerian(double d)
+    private void UpdateKeplerian(double d)
     {
         N_act = Rev(N + d*N_inc);
         i_act = Rev(i + d*i_inc);
@@ -224,73 +109,47 @@ public class Planet : MonoBehaviour
         M_act = Rev(M + d*M_inc);
     }
 
-    public double DayNumber(System.DateTime date, int hour)
+    private double DayNumber(System.DateTime date, float hour)
     {
         return 367 * date.Year - (7 * (date.Year + ((date.Month + 9) / 12))) / 4 + (275 * date.Month) / 9 + date.Day - 730530 + hour / 24.0;
     }
 
-    public double Rev(double angle)
+    private double Rev(double angle)
     {
         return angle - System.Math.Floor(angle / 360.0) * 360.0;
     }
 
-    public void UpdateTrail()
-    {
-        trailNode newPos;
-
-        newPos = new trailNode();
-
-        newPos.x = x;
-        newPos.y = y;
-        newPos.z = z;
-
-        newPos.next = startPtr.next;
-
-        startPtr.next = newPos;
-
-        if(trailCount < a_act*60*12)
-            trailCount++;
-        else
-        {
-            trailNode temp1, temp2;
-            
-            temp1 = startPtr;
-            temp2 = (trailNode)temp1.next;
-
-            while(temp2.next != null)
-            {
-                temp1 = (trailNode)temp1.next;
-                temp2 = (trailNode)temp2.next;
-            }
-
-            temp1.next = null;
-        }
-    }
-
     double m_Pi;
-    double m_RaDeg;
-    double m_DegRad;
+    double m_Rad2Deg;
+    double m_Deg2Rad;
+
+    float m_Hour;
+    System.DateTime m_Date = System.DateTime.Today;
+
+    float m_TimeScale = 1;
 
     // initial, actual and increment values of the Keplerian elements (AU, deg)
-    double N, N_act, N_inc;
-    double i, i_act, i_inc;
-    double w, w_act, w_inc;
-    double a, a_act, a_inc;
-    double e, e_act, e_inc;
-    double M, M_act, M_inc;
+    public double N, N_inc;
+    public double i, i_inc;
+    public double w, w_inc;
+    public double a, a_inc;
+    public double e, e_inc;
+    public double M, M_inc;
+
+    double N_act;
+    double i_act;
+    double w_act;
+    double a_act;
+    double e_act;
+    double M_act;
 
     // heliocentric coordinates (AU)
     double x;
     double y;
-    double z;
+    double z;   
 
-   
-
-    trailNode startPtr;   // Start pointer of the trail linked list
-    int trailCount;
-
-    double mass;	  // (kg)
-    double radius; // (AU)
+    public double mass;	  // (kg)
+    public double radius; // (AU)
 
     double angvel; // angular velocity of the rotation around its own axis (deg/day)
     double axis_angle; //angle between its rotation axis and the normal of the orbital plane (deg)
